@@ -1,6 +1,6 @@
 import { Schema, Types, model } from 'mongoose';
 
-interface IKeyToken {
+export interface IKeyToken {
     user?: Types.ObjectId;
     publicKey: string;
     privateKey: string;

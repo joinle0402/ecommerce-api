@@ -1,30 +1,30 @@
 import { CreateKeyToken } from '@/interfaces/keyStore.interface';
-import { KeyTokenModel } from '@/models/keyToken.model';
+import { KeyToken } from '@/models/keyToken.model';
 import { logger } from '@/utilities/logger.utility';
 
 export class KeyTokenService {
     static findAll = async () => {
-        const keyTokens = await KeyTokenModel.find().lean();
+        const keyTokens = await KeyToken.find().lean();
         logger.info('KeyTokenService.findAll.keyTokens: ', keyTokens);
         return keyTokens;
     };
 
     static findByUserId = async (userId: string) => {
-        const keyToken = await KeyTokenModel.findOne({ user: userId }).lean();
+        const keyToken = await KeyToken.findOne({ user: userId }).lean();
         logger.info('KeyTokenService.findByUserId.keyToken: ', keyToken);
         return keyToken;
     };
 
     static findByRefreshTokensUsed = async (refreshToken: string) => {
         logger.info('KeyTokenService.findByRefreshToken.refreshToken: %s', refreshToken);
-        const keyToken = await KeyTokenModel.findOne({ refreshTokensUsed: refreshToken }).lean();
+        const keyToken = await KeyToken.findOne({ refreshTokensUsed: refreshToken }).lean();
         logger.info('KeyTokenService.findByRefreshTokensUsed.keyToken: ', keyToken);
         return keyToken;
     };
 
     static findByRefreshToken = async (refreshToken: string) => {
         logger.info('KeyTokenService.findByRefreshToken.refreshToken: %s', refreshToken);
-        const keyToken = await KeyTokenModel.findOne({ refreshToken }).lean();
+        const keyToken = await KeyToken.findOne({ refreshToken }).lean();
         logger.info('KeyTokenService.findByRefreshToken.keyToken: ', keyToken);
         return keyToken;
     };
@@ -34,7 +34,7 @@ export class KeyTokenService {
         logger.info('KeyTokenService.createKeyStore.createKeyStore: ', createKeyStore);
 
         try {
-            const keyToken = await KeyTokenModel.findOneAndUpdate(
+            const keyToken = await KeyToken.findOneAndUpdate(
                 { user },
                 { privateKey, publicKey, refreshToken, refreshTokensUsed: [] },
                 { upsert: true, new: true }
@@ -48,7 +48,7 @@ export class KeyTokenService {
     };
 
     static updateRefreshToken = async (oldRefreshToken: string, newRefreshToken: string) => {
-        const updatedKeyToken = await KeyTokenModel.findOneAndUpdate(
+        const updatedKeyToken = await KeyToken.findOneAndUpdate(
             { refreshToken: oldRefreshToken },
             {
                 $set: {
@@ -65,17 +65,17 @@ export class KeyTokenService {
     };
 
     static deleteById = async (id: string) => {
-        const deleteInfo = await KeyTokenModel.deleteOne({ _id: id });
+        const deleteInfo = await KeyToken.deleteOne({ _id: id });
         logger.info('KeyTokenService.deleteById.deleteInfo: ', deleteInfo);
     };
 
     static deleteByUserId = async (userId: string) => {
-        const deleteInfo = await KeyTokenModel.deleteOne({ user: userId });
+        const deleteInfo = await KeyToken.deleteOne({ user: userId });
         logger.info('KeyTokenService.deleteByUserId.deleteInfo: ', deleteInfo);
     };
 
     static deleteAll = async () => {
-        const deleteInfo = await KeyTokenModel.deleteMany({});
+        const deleteInfo = await KeyToken.deleteMany({});
         logger.info('KeyTokenService.deleteAll.deleteInfo: ', deleteInfo);
     };
 }

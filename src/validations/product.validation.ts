@@ -26,7 +26,7 @@ export const updateProductSchema = {
         countInStock: Joi.number().integer().positive(),
         rating: Joi.number().integer().min(1).max(5),
         description: Joi.string(),
-        createdBy: Joi.string().required().custom(isValidObjectId),
+        createdBy: Joi.string().custom(isValidObjectId),
     }),
 };
 

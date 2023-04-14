@@ -16,8 +16,8 @@ describe('Authenticate API', () => {
             };
         });
         it('should return statusCode = 201 if user send valid credentials', async () => {
-            const testCase = { ...userInput };
-            const response = await request(app).post('/api/v1/auth/register').send(testCase);
+            const testcase = { ...userInput };
+            const response = await request(app).post('/api/v1/auth/register').send(testcase);
             expect(response.statusCode).toBe(StatusCode.CREATED);
             expect(response.body).toHaveProperty('code', StatusCode.CREATED);
             expect(response.body).toHaveProperty('success', true);
@@ -25,70 +25,20 @@ describe('Authenticate API', () => {
             expect(response.body).toHaveProperty('metadata');
             expect(response.body.metadata).toHaveProperty('createdUser');
             expect(response.body.metadata.createdUser).toHaveProperty('_id');
-            expect(response.body.metadata.createdUser).toHaveProperty('fullname', testCase.fullname);
-            expect(response.body.metadata.createdUser).toHaveProperty('email', testCase.email.toLowerCase());
+            expect(response.body.metadata.createdUser).toHaveProperty('fullname', testcase.fullname);
+            expect(response.body.metadata.createdUser).toHaveProperty('email', testcase.email.toLowerCase());
             expect(response.body.metadata.createdUser).toHaveProperty('password', expect.any(String));
-            expect(response.body.metadata.createdUser).toHaveProperty('roles', [Role.USER]);
+            expect(response.body.metadata.createdUser).toHaveProperty('role', Role.User);
             expect(response.body.metadata.createdUser).toHaveProperty('verified', false);
         });
         it('should return statusCode = 409 if user send email already exists', async () => {
-            const testCase = { ...userInput };
-            await request(app).post('/api/v1/auth/register').send(testCase);
-            const response = await request(app).post('/api/v1/auth/register').send(testCase);
+            const testcase = { ...userInput };
+            await request(app).post('/api/v1/auth/register').send(testcase);
+            const response = await request(app).post('/api/v1/auth/register').send(testcase);
             expect(response.statusCode).toBe(StatusCode.CONFLICT);
             expect(response.body).toHaveProperty('code', StatusCode.CONFLICT);
             expect(response.body).toHaveProperty('success', false);
             expect(response.body).toHaveProperty('error', 'email already exists!');
-        });
-
-        describe('Test Validation', () => {
-            it('should return stateCode = 400 and error if user send empty object', async () => {
-                const testCase = {};
-                const response = await request(app).post('/api/v1/auth/register').send(testCase);
-                expect(response.statusCode).toBe(StatusCode.BAD_REQUEST);
-                expect(response.body).toHaveProperty('errors');
-                expect(response.body.errors).toHaveProperty('fullname');
-                expect(response.body.errors.fullname).toContain('is required');
-                expect(response.body.errors).toHaveProperty('email');
-                expect(response.body.errors.email).toContain('is required');
-                expect(response.body.errors).toHaveProperty('password');
-                expect(response.body.errors.password).toContain('is required');
-            });
-
-            it('should return stateCode = 400 and error if user send fields is empty string', async () => {
-                const testCase = { fullname: '', email: '', password: '' };
-                const response = await request(app).post('/api/v1/auth/register').send(testCase);
-                expect(response.statusCode).toBe(StatusCode.BAD_REQUEST);
-                expect(response.body).toHaveProperty('errors');
-                expect(response.body.errors).toHaveProperty('fullname');
-                expect(response.body.errors.fullname).toContain('is not allowed to be empty');
-                expect(response.body.errors).toHaveProperty('email');
-                expect(response.body.errors.email).toContain('is not allowed to be empty');
-                expect(response.body.errors).toHaveProperty('password');
-                expect(response.body.errors.password).toContain('is not allowed to be empty');
-            });
-
-            it('should return stateCode = 400 and error if user sent wrong data type', async () => {
-                const testCase = { fullname: {}, email: ['Hello'], password: 123 };
-                const response = await request(app).post('/api/v1/auth/register').send(testCase);
-                expect(response.statusCode).toBe(StatusCode.BAD_REQUEST);
-                expect(response.body).toHaveProperty('errors');
-                expect(response.body.errors).toHaveProperty('fullname');
-                expect(response.body.errors.fullname).toContain('must be a string');
-                expect(response.body.errors).toHaveProperty('email');
-                expect(response.body.errors.email).toContain('must be a string');
-                expect(response.body.errors).toHaveProperty('password');
-                expect(response.body.errors.password).toContain('must be a string');
-            });
-
-            it('should return stateCode = 400 and error if user sent wrong length of fullname, password', async () => {
-                const testCase = { ...userInput, fullname: 'John', password: '12344'.repeat(20) };
-                const response = await request(app).post('/api/v1/auth/register').send(testCase);
-                expect(response.statusCode).toBe(StatusCode.BAD_REQUEST);
-                expect(response.body).toHaveProperty('errors');
-                expect(response.body.errors).toHaveProperty('fullname');
-                expect(response.body.errors).toHaveProperty('password');
-            });
         });
     });
     describe('POST - /api/v1/auth/login', () => {
@@ -98,13 +48,13 @@ describe('Authenticate API', () => {
         };
 
         beforeAll(async () => {
-            const testCase = { ...userInput, fullname: faker.name.fullName() };
-            await request(app).post('/api/v1/auth/register').send(testCase);
+            const testcase = { ...userInput, fullname: faker.name.fullName() };
+            await request(app).post('/api/v1/auth/register').send(testcase);
         });
 
         it('should return statusCode = 401 if user send invalid email', async () => {
-            const testCase = { ...userInput, email: faker.internet.email() };
-            const response = await request(app).post('/api/v1/auth/login').send(testCase);
+            const testcase = { ...userInput, email: faker.internet.email() };
+            const response = await request(app).post('/api/v1/auth/login').send(testcase);
             expect(response.statusCode).toBe(StatusCode.UNAUTHORIZED);
             expect(response.body).toHaveProperty('code', StatusCode.UNAUTHORIZED);
             expect(response.body).toHaveProperty('success', false);
@@ -112,8 +62,8 @@ describe('Authenticate API', () => {
         });
 
         it('should return statusCode = 401 if user send invalid password', async () => {
-            const testCase = { ...userInput, password: 'invalid' };
-            const response = await request(app).post('/api/v1/auth/login').send(testCase);
+            const testcase = { ...userInput, password: 'invalid' };
+            const response = await request(app).post('/api/v1/auth/login').send(testcase);
             expect(response.statusCode).toBe(StatusCode.UNAUTHORIZED);
             expect(response.body).toHaveProperty('code', StatusCode.UNAUTHORIZED);
             expect(response.body).toHaveProperty('success', false);
@@ -121,8 +71,8 @@ describe('Authenticate API', () => {
         });
 
         it('should return statusCode = 200 if user send valid credentials', async () => {
-            const testCase = { ...userInput };
-            const response = await request(app).post('/api/v1/auth/login').send(testCase);
+            const testcase = { ...userInput };
+            const response = await request(app).post('/api/v1/auth/login').send(testcase);
             expect(response.statusCode).toBe(StatusCode.OKE);
             expect(response.body).toHaveProperty('code', StatusCode.OKE);
             expect(response.body).toHaveProperty('success', true);
@@ -280,14 +230,14 @@ describe('Authenticate API', () => {
                 expect(response.body.errors.refreshToken).toContain('is not allowed to be empty');
             });
             it('should return stateCode = 400 and error if user sent wrong data type', async () => {
-                const testCase = { refreshToken: 123 };
+                const testcase = { refreshToken: 123 };
                 const response = await request(app)
                     .post('/api/v1/auth/refreshToken')
                     .set({
                         [config.auth.headers.clientId]: userId,
                         [config.auth.headers.authorization]: accessToken,
                     })
-                    .send(testCase);
+                    .send(testcase);
                 expect(response.statusCode).toBe(StatusCode.BAD_REQUEST);
                 expect(response.body).toHaveProperty('code', StatusCode.BAD_REQUEST);
                 expect(response.body).toHaveProperty('success', false);

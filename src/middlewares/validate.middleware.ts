@@ -19,8 +19,8 @@ export const validateResource = schema => async (request: Request, response: Res
             }),
             {}
         );
-
         logger.error('ValidateResource.errors: ', { errors });
+        logger.error('ValidateResource.value: ', { value });
         return response.status(StatusCode.BAD_REQUEST).json({
             code: response.statusCode,
             type: 'ValidationError',

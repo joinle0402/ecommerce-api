@@ -1,9 +1,9 @@
-import { UserModel } from '@/models/user.model';
+import { User } from '@/models/user.model';
 import { logger } from '@/utilities/logger.utility';
 
 export class UserService {
     static findAll = async () => {
-        const users = await UserModel.find();
+        const users = await User.find();
         logger.info('UserService.findAll.users: ', users);
 
         return users;
@@ -15,17 +15,17 @@ export class UserService {
             fullname: 1,
             email: 1,
             password: 2,
-            roles: 1,
+            role: 1,
         }
     ) => {
-        const user = await UserModel.findOne({ email }).select(select).lean();
+        const user = await User.findOne({ email }).select(select).lean();
         logger.info('UserService.findByEmail.user: ', user);
 
         return user;
     };
 
     static deleteAll = async () => {
-        const deleteInfo = await UserModel.deleteMany({});
+        const deleteInfo = await User.deleteMany({});
         logger.info('UserService.deleteAll.deleteInfo: ', deleteInfo);
     };
 }

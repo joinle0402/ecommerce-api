@@ -1,7 +1,7 @@
 import { compare, hash } from 'bcrypt';
 import { Model, Schema, model } from 'mongoose';
 
-const Role = {
+export const Role = {
     User: 'USER',
     Administrator: 'ADMINISTRATOR',
 };
@@ -47,7 +47,7 @@ const UserSchema = new Schema<IUser, IUserModel, IUserMethods>(
         },
         role: {
             type: String,
-            enum: Object.keys(Role),
+            enum: Object.values(Role),
             default: Role.User,
         },
     },

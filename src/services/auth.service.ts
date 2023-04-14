@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { AuthenticateFailureError, BadRequestError, ConflictError } from '@/helpers/error';
 import { LoginBody, RegisterBody, UserDecode } from '@/interfaces/auth.interface';
-import { UserModel } from '@/models/user.model';
+import { User } from '@/models/user.model';
 import { JwtUtil } from '@/utilities/jwt.utility';
 import { logger } from '@/utilities/logger.utility';
 import { KeyTokenService } from './keyToken.service';
@@ -14,13 +14,13 @@ export class AuthService {
         const { fullname, email, password } = registerBody;
         logger.info('AuthService.register.registerBody: ', registerBody);
 
-        const userExists = await UserModel.findOne({ email }).lean();
+        const userExists = await User.findOne({ email }).lean();
         if (userExists) {
             logger.info('AuthService.register.userExists: ', userExists);
             throw new ConflictError('email already exists!');
         }
 
-        const createdUser = await UserModel.create({ fullname, email, password });
+        const createdUser = await User.create({ fullname, email, password });
         logger.info('AuthService.register.createdUser: ', createdUser.toObject());
 
         return {
@@ -32,7 +32,7 @@ export class AuthService {
         const { email, password } = loginBody;
         logger.info('AuthService.login.loginBody: ', loginBody);
 
-        const foundUser = await UserModel.findOne({ email });
+        const foundUser = await User.findOne({ email });
         if (!foundUser) {
             throw new AuthenticateFailureError('Invalid email or password!');
         }

@@ -1,6 +1,5 @@
 import { config } from '@/configs/config';
 import { AuthenticateFailureError } from '@/helpers/error';
-import { KeyTokenAttachment } from '@/interfaces';
 import { UserDecode } from '@/interfaces/auth.interface';
 import { KeyTokenService } from '@/services/keyToken.service';
 import { JwtUtil } from '@/utilities/jwt.utility';
@@ -29,15 +28,6 @@ export const authentication = async (request: Request, response: Response, next:
     if (decodedUser.userId != userId) {
         throw new AuthenticateFailureError('invalid user!');
     }
-
-    const keyTokenAttachment: KeyTokenAttachment = {
-        _id: keyToken._id,
-        publicKey: keyToken.publicKey,
-        privateKey: keyToken.privateKey,
-        user: keyToken._id,
-        refreshToken: keyToken.refreshToken,
-        refreshTokensUsed: keyToken.refreshTokensUsed,
-    };
-    request.keyToken = keyTokenAttachment;
+    request.keyToken = keyToken;
     return next();
 };

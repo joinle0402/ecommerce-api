@@ -5,6 +5,7 @@ import { StatusCode } from '@/configs/statusCode.config';
 import { randomInt } from '@/helpers/random';
 import { config } from '@/configs/config';
 import slugify from 'slugify';
+import { logger } from '@/utilities/logger.utility';
 
 async function initial(isInitProduct = false) {
     const userInput = {
@@ -13,27 +14,28 @@ async function initial(isInitProduct = false) {
         password: faker.internet.password(),
     };
     await request(app).post('/api/v1/auth/register').send(userInput);
-    const response = await request(app).post('/api/v1/auth/login').send({
+    const loginResponse = await request(app).post('/api/v1/auth/login').send({
         email: userInput.email,
         password: userInput.password,
     });
     const productInput = {
         name: faker.commerce.productName(),
         image: faker.image.imageUrl(640, 480, 'cat', true),
-        category: faker.commerce.product(),
+        category: faker.random.words(2),
         price: randomInt(11, 99) * 100000,
         countInStock: randomInt(1, 9) * 10,
         rating: randomInt(1, 5),
         description: faker.commerce.productDescription(),
-        createdBy: response.body.metadata.user._id,
+        createdBy: loginResponse.body.metadata.user._id,
     };
+    logger.info({ createdBy: loginResponse.body.metadata.user._id });
     let createdProductResponse;
     if (isInitProduct) {
         createdProductResponse = await request(app)
             .post('/api/v1/products/')
             .set({
-                [config.auth.headers.clientId]: response.body.metadata.user._id,
-                [config.auth.headers.authorization]: response.body.metadata.tokenPair.accessToken,
+                [config.auth.headers.clientId]: loginResponse.body.metadata.user._id,
+                [config.auth.headers.authorization]: loginResponse.body.metadata.tokenPair.accessToken,
             })
             .send({
                 name: faker.commerce.productName(),
@@ -43,13 +45,13 @@ async function initial(isInitProduct = false) {
                 countInStock: randomInt(1, 9) * 10,
                 rating: randomInt(1, 5),
                 description: faker.commerce.productDescription(),
-                createdBy: response.body.metadata.user._id,
+                createdBy: loginResponse.body.metadata.user._id,
             });
     }
 
     return {
-        userId: response.body.metadata.user._id as string,
-        accessToken: response.body.metadata.tokenPair.accessToken as string,
+        userId: loginResponse.body.metadata.user._id as string,
+        accessToken: loginResponse.body.metadata.tokenPair.accessToken as string,
         productInput,
         createdProduct: isInitProduct ? createdProductResponse.body.metadata.createdProduct : undefined,
     };

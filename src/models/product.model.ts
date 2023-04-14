@@ -29,7 +29,6 @@ const ProductSchema = new Schema<IProduct>(
             trim: true,
             index: true,
             unique: true,
-            required: true,
         },
         image: {
             type: String,
