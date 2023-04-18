@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { LoginBody, RefreshTokenBody } from '@/interfaces/auth.interface';
 import { AuthService } from '@/services/auth.service';
-import { StatusCode } from '@/configs/statusCode.config';
+import { StatusCodes } from 'http-status-codes';
 
 export class AuthController {
     /**
@@ -12,8 +12,8 @@ export class AuthController {
      * @param response Response
      */
     static register = async (request: Request, response: Response) => {
-        response.status(StatusCode.CREATED).json({
-            code: StatusCode.CREATED,
+        response.status(StatusCodes.CREATED).json({
+            code: StatusCodes.CREATED,
             success: true,
             message: 'register user!',
             metadata: await AuthService.register(request.body),
@@ -28,8 +28,8 @@ export class AuthController {
      * @param response Response
      */
     static login = async (request: Request<undefined, undefined, LoginBody>, response: Response) => {
-        response.status(StatusCode.OKE).json({
-            code: StatusCode.OKE,
+        response.status(StatusCodes.OK).json({
+            code: StatusCodes.OK,
             success: true,
             message: 'login user!',
             metadata: await AuthService.login(request.body),
@@ -44,11 +44,11 @@ export class AuthController {
      * @param response Response
      */
     static logout = async (request: Request<undefined, undefined, RefreshTokenBody>, response: Response) => {
-        response.status(StatusCode.OKE).json({
-            code: StatusCode.OKE,
+        response.status(StatusCodes.OK).json({
+            code: StatusCodes.OK,
             success: true,
             message: 'logout user!',
-            // metadata: await AuthService.logout(request.keyToken._id),
+            metadata: await AuthService.logout(response.locals.keyToken),
         });
     };
 
@@ -60,8 +60,8 @@ export class AuthController {
      * @param response Response
      */
     static refreshToken = async (request: Request<undefined, undefined, RefreshTokenBody>, response: Response) => {
-        response.status(StatusCode.OKE).json({
-            code: StatusCode.OKE,
+        response.status(StatusCodes.OK).json({
+            code: StatusCodes.OK,
             success: true,
             message: 'refresh token user!',
             metadata: await AuthService.refreshToken(request.body.refreshToken),

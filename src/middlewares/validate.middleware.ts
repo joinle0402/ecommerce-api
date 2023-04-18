@@ -1,7 +1,7 @@
-import { StatusCode } from '@/configs/statusCode.config';
 import { pick } from '@/helpers/lodash';
 import { logger } from '@/utilities/logger.utility';
 import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import Joi from 'joi';
 
 export const validateResource = schema => async (request: Request, response: Response, next: NextFunction) => {
@@ -21,7 +21,7 @@ export const validateResource = schema => async (request: Request, response: Res
         );
         logger.error('ValidateResource.errors: ', { errors });
         logger.error('ValidateResource.value: ', { value });
-        return response.status(StatusCode.BAD_REQUEST).json({
+        return response.status(StatusCodes.BAD_REQUEST).json({
             code: response.statusCode,
             type: 'ValidationError',
             success: false,

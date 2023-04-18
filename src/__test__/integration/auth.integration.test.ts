@@ -2,8 +2,8 @@ import request from 'supertest';
 import { faker } from '@faker-js/faker';
 import { app } from '@/app';
 import { Role } from '@/models/user.model';
-import { StatusCode } from '@/configs/statusCode.config';
 import { config } from '@/configs/config';
+import { StatusCodes } from 'http-status-codes';
 
 describe('Authenticate API', () => {
     describe('POST - /api/v1/auth/register', () => {
@@ -18,8 +18,8 @@ describe('Authenticate API', () => {
         it('should return statusCode = 201 if user send valid credentials', async () => {
             const testcase = { ...userInput };
             const response = await request(app).post('/api/v1/auth/register').send(testcase);
-            expect(response.statusCode).toBe(StatusCode.CREATED);
-            expect(response.body).toHaveProperty('code', StatusCode.CREATED);
+            expect(response.statusCode).toBe(StatusCodes.CREATED);
+            expect(response.body).toHaveProperty('code', StatusCodes.CREATED);
             expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('message', 'register user!');
             expect(response.body).toHaveProperty('metadata');
@@ -35,8 +35,8 @@ describe('Authenticate API', () => {
             const testcase = { ...userInput };
             await request(app).post('/api/v1/auth/register').send(testcase);
             const response = await request(app).post('/api/v1/auth/register').send(testcase);
-            expect(response.statusCode).toBe(StatusCode.CONFLICT);
-            expect(response.body).toHaveProperty('code', StatusCode.CONFLICT);
+            expect(response.statusCode).toBe(StatusCodes.CONFLICT);
+            expect(response.body).toHaveProperty('code', StatusCodes.CONFLICT);
             expect(response.body).toHaveProperty('success', false);
             expect(response.body).toHaveProperty('error', 'email already exists!');
         });
@@ -55,8 +55,8 @@ describe('Authenticate API', () => {
         it('should return statusCode = 401 if user send invalid email', async () => {
             const testcase = { ...userInput, email: faker.internet.email() };
             const response = await request(app).post('/api/v1/auth/login').send(testcase);
-            expect(response.statusCode).toBe(StatusCode.UNAUTHORIZED);
-            expect(response.body).toHaveProperty('code', StatusCode.UNAUTHORIZED);
+            expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+            expect(response.body).toHaveProperty('code', StatusCodes.UNAUTHORIZED);
             expect(response.body).toHaveProperty('success', false);
             expect(response.body).toHaveProperty('error', 'Invalid email or password!');
         });
@@ -64,8 +64,8 @@ describe('Authenticate API', () => {
         it('should return statusCode = 401 if user send invalid password', async () => {
             const testcase = { ...userInput, password: 'invalid' };
             const response = await request(app).post('/api/v1/auth/login').send(testcase);
-            expect(response.statusCode).toBe(StatusCode.UNAUTHORIZED);
-            expect(response.body).toHaveProperty('code', StatusCode.UNAUTHORIZED);
+            expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+            expect(response.body).toHaveProperty('code', StatusCodes.UNAUTHORIZED);
             expect(response.body).toHaveProperty('success', false);
             expect(response.body).toHaveProperty('error', 'Invalid email or password!');
         });
@@ -73,8 +73,8 @@ describe('Authenticate API', () => {
         it('should return statusCode = 200 if user send valid credentials', async () => {
             const testcase = { ...userInput };
             const response = await request(app).post('/api/v1/auth/login').send(testcase);
-            expect(response.statusCode).toBe(StatusCode.OKE);
-            expect(response.body).toHaveProperty('code', StatusCode.OKE);
+            expect(response.statusCode).toBe(StatusCodes.OK);
+            expect(response.body).toHaveProperty('code', StatusCodes.OK);
             expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('message', 'login user!');
             expect(response.body).toHaveProperty('metadata');
@@ -113,8 +113,8 @@ describe('Authenticate API', () => {
                         [config.auth.headers.authorization]: accessToken,
                     });
 
-                expect(response.statusCode).toBe(StatusCode.UNAUTHORIZED);
-                expect(response.body).toHaveProperty('code', StatusCode.UNAUTHORIZED);
+                expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+                expect(response.body).toHaveProperty('code', StatusCodes.UNAUTHORIZED);
                 expect(response.body).toHaveProperty('success', false);
                 expect(response.body).toHaveProperty('error', 'invalid request!');
             });
@@ -127,8 +127,8 @@ describe('Authenticate API', () => {
                         [config.auth.headers.authorization]: accessToken,
                     });
 
-                expect(response.statusCode).toBe(StatusCode.UNAUTHORIZED);
-                expect(response.body).toHaveProperty('code', StatusCode.UNAUTHORIZED);
+                expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+                expect(response.body).toHaveProperty('code', StatusCodes.UNAUTHORIZED);
                 expect(response.body).toHaveProperty('success', false);
                 expect(response.body).toHaveProperty('error', 'invalid client id!');
             });
@@ -140,8 +140,8 @@ describe('Authenticate API', () => {
                         [config.auth.headers.clientId]: userId,
                     });
 
-                expect(response.statusCode).toBe(StatusCode.UNAUTHORIZED);
-                expect(response.body).toHaveProperty('code', StatusCode.UNAUTHORIZED);
+                expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+                expect(response.body).toHaveProperty('code', StatusCodes.UNAUTHORIZED);
                 expect(response.body).toHaveProperty('success', false);
                 expect(response.body).toHaveProperty('error', 'invalid request!');
             });
@@ -154,8 +154,8 @@ describe('Authenticate API', () => {
                         [config.auth.headers.authorization]: '6433e45b5d188273d2b41414',
                     });
 
-                expect(response.statusCode).toBe(StatusCode.INTERNAL_SERVER_ERROR);
-                expect(response.body).toHaveProperty('code', StatusCode.INTERNAL_SERVER_ERROR);
+                expect(response.statusCode).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
+                expect(response.body).toHaveProperty('code', StatusCodes.INTERNAL_SERVER_ERROR);
                 expect(response.body).toHaveProperty('success', false);
             });
         });
@@ -168,8 +168,8 @@ describe('Authenticate API', () => {
                     [config.auth.headers.authorization]: accessToken,
                 });
 
-            expect(response.statusCode).toBe(StatusCode.OKE);
-            expect(response.body).toHaveProperty('code', StatusCode.OKE);
+            expect(response.statusCode).toBe(StatusCodes.OK);
+            expect(response.body).toHaveProperty('code', StatusCodes.OK);
             expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('message', 'logout user!');
         });
@@ -203,8 +203,8 @@ describe('Authenticate API', () => {
                         [config.auth.headers.authorization]: accessToken,
                     })
                     .send({});
-                expect(response.statusCode).toBe(StatusCode.BAD_REQUEST);
-                expect(response.body).toHaveProperty('code', StatusCode.BAD_REQUEST);
+                expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+                expect(response.body).toHaveProperty('code', StatusCodes.BAD_REQUEST);
                 expect(response.body).toHaveProperty('success', false);
                 expect(response.body).toHaveProperty('errors');
                 expect(response.body.errors).toHaveProperty('refreshToken');
@@ -222,8 +222,8 @@ describe('Authenticate API', () => {
                         refreshToken: '',
                     });
 
-                expect(response.statusCode).toBe(StatusCode.BAD_REQUEST);
-                expect(response.body).toHaveProperty('code', StatusCode.BAD_REQUEST);
+                expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+                expect(response.body).toHaveProperty('code', StatusCodes.BAD_REQUEST);
                 expect(response.body).toHaveProperty('success', false);
                 expect(response.body).toHaveProperty('errors');
                 expect(response.body.errors).toHaveProperty('refreshToken');
@@ -238,8 +238,8 @@ describe('Authenticate API', () => {
                         [config.auth.headers.authorization]: accessToken,
                     })
                     .send(testcase);
-                expect(response.statusCode).toBe(StatusCode.BAD_REQUEST);
-                expect(response.body).toHaveProperty('code', StatusCode.BAD_REQUEST);
+                expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+                expect(response.body).toHaveProperty('code', StatusCodes.BAD_REQUEST);
                 expect(response.body).toHaveProperty('success', false);
                 expect(response.body).toHaveProperty('errors');
                 expect(response.body.errors).toHaveProperty('refreshToken');
@@ -258,8 +258,8 @@ describe('Authenticate API', () => {
                     refreshToken,
                 });
 
-            expect(response.statusCode).toBe(StatusCode.OKE);
-            expect(response.body).toHaveProperty('code', StatusCode.OKE);
+            expect(response.statusCode).toBe(StatusCodes.OK);
+            expect(response.body).toHaveProperty('code', StatusCodes.OK);
             expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('message', 'refresh token user!');
             expect(response.body).toHaveProperty('metadata');
@@ -282,8 +282,8 @@ describe('Authenticate API', () => {
                     refreshToken,
                 });
 
-            expect(response.statusCode).toBe(StatusCode.FORBIDDEN);
-            expect(response.body).toHaveProperty('code', StatusCode.FORBIDDEN);
+            expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+            expect(response.body).toHaveProperty('code', StatusCodes.FORBIDDEN);
             expect(response.body).toHaveProperty('success', false);
             expect(response.body).toHaveProperty('error', 'Something went wrong !! Please log in again!');
         });

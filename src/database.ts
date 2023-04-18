@@ -15,6 +15,10 @@ export const connectDatabase = async () => {
     }
 };
 
+export const closeDatabase = async () => {
+    await mongoose.connection.close();
+};
+
 mongoose.set('debug', function (collectionName, methodName, ...methodArgs) {
     const messageMapper = message => {
         return util

@@ -1,23 +1,21 @@
 import crypto from 'crypto';
-import { AuthenticateFailureError, BadRequestError, ConflictError } from '@/helpers/error';
 import { LoginBody, RegisterBody, UserDecode } from '@/interfaces/auth.interface';
 import { User } from '@/models/user.model';
 import { JwtUtil } from '@/utilities/jwt.utility';
 import { logger } from '@/utilities/logger.utility';
 import { KeyTokenService } from './keyToken.service';
 import { pick } from '@/helpers/lodash';
-import { ForbiddenError } from '@/helpers/error';
 import { UserService } from './user.service';
+import createHttpError from 'http-errors';
 
 export class AuthService {
     static register = async (registerBody: RegisterBody) => {
         const { fullname, email, password } = registerBody;
         logger.info('AuthService.register.registerBody: ', registerBody);
 
-        const userExists = await User.findOne({ email }).lean();
-        if (userExists) {
-            logger.info('AuthService.register.userExists: ', userExists);
-            throw new ConflictError('email already exists!');
+        if (await User.findOne({ email }).lean()) {
+            logger.info('AuthService.register.error: email already exists!');
+            throw new createHttpError.Conflict('email already exists!');
         }
 
         const createdUser = await User.create({ fullname, email, password });
@@ -34,14 +32,14 @@ export class AuthService {
 
         const foundUser = await User.findOne({ email });
         if (!foundUser) {
-            throw new AuthenticateFailureError('Invalid email or password!');
+            throw new createHttpError.Unauthorized('Invalid email or password!');
         }
         logger.info('AuthService.login.foundUser: ', foundUser.toObject());
 
         const isMatch = await foundUser.comparePassword(password);
         logger.info('AuthService.login.isMatch: %s', isMatch);
         if (!isMatch) {
-            throw new AuthenticateFailureError('Invalid email or password!');
+            throw new createHttpError.Unauthorized('Invalid email or password!');
         }
 
         const privateKey = crypto.randomBytes(64).toString('hex');
@@ -78,12 +76,12 @@ export class AuthService {
             const decodedUser = (await JwtUtil.verifyToken(refreshTokenInput, foundKeyToken.privateKey)) as UserDecode;
             logger.info(`user used refresh token? (id: ${decodedUser.userId}, email: ${decodedUser.email})`);
             await KeyTokenService.deleteByUserId(decodedUser.userId);
-            throw new ForbiddenError('Something went wrong !! Please log in again!');
+            throw new createHttpError.Forbidden('Something went wrong !! Please log in again!');
         }
 
         const keyToken = await KeyTokenService.findByRefreshToken(refreshTokenInput);
         if (!keyToken) {
-            throw new BadRequestError('invalid refresh token!');
+            throw new createHttpError.BadRequest('invalid refresh token!');
         }
 
         const { userId, email } = (await JwtUtil.verifyToken(refreshTokenInput, keyToken.privateKey)) as UserDecode;
@@ -91,7 +89,7 @@ export class AuthService {
 
         const foundUser = await UserService.findByEmail(email);
         if (!foundUser) {
-            throw new BadRequestError();
+            throw new createHttpError.BadRequest();
         }
 
         const userPayload = { userId: foundUser._id, email: foundUser.email };

@@ -2,7 +2,7 @@ import { logger } from '@/utilities/logger.utility';
 import { Schema, Types, model } from 'mongoose';
 import slugify from 'slugify';
 
-interface IProduct {
+export interface IProduct {
     name: string;
     slug: string;
     image: string;
@@ -88,8 +88,11 @@ const ProductSchema = new Schema<IProduct>(
 );
 
 ProductSchema.pre('save', function (next) {
-    this.slug = slugify(this.name, { lower: true, trim: true });
-    logger.info('Product.pre.save.slug: %s', this.slug);
+    if (this.isModified('name')) {
+        this.slug = slugify(this.name, { lower: true, trim: true });
+        logger.info(`ProductSchema.pre('save').slug: %s`, this.slug);
+    }
+
     next();
 });
 

@@ -1,11 +1,11 @@
 import request from 'supertest';
+import slugify from 'slugify';
 import { faker } from '@faker-js/faker';
 import { app } from '@/app';
-import { StatusCode } from '@/configs/statusCode.config';
 import { randomInt } from '@/helpers/random';
 import { config } from '@/configs/config';
-import slugify from 'slugify';
 import { logger } from '@/utilities/logger.utility';
+import { StatusCodes } from 'http-status-codes';
 
 async function initial(isInitProduct = false) {
     const userInput = {
@@ -60,7 +60,6 @@ async function initial(isInitProduct = false) {
 describe('Testing Product Api', () => {
     describe('POST - /api/v1/products/ - Create new product', () => {
         let initialState;
-
         beforeAll(async () => {
             initialState = await initial();
         });
@@ -73,8 +72,8 @@ describe('Testing Product Api', () => {
                     [config.auth.headers.authorization]: initialState.accessToken,
                 })
                 .send(testCase);
-            expect(response.statusCode).toBe(StatusCode.CREATED);
-            expect(response.body).toHaveProperty('code', StatusCode.CREATED);
+            expect(response.statusCode).toBe(StatusCodes.CREATED);
+            expect(response.body).toHaveProperty('code', StatusCodes.CREATED);
             expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('message', 'Created new product!');
             expect(response.body).toHaveProperty('metadata');
@@ -90,14 +89,13 @@ describe('Testing Product Api', () => {
                     [config.auth.headers.authorization]: initialState.accessToken,
                 })
                 .send(testCase);
-            expect(response.statusCode).toBe(StatusCode.CONFLICT);
-            expect(response.body).toHaveProperty('code', StatusCode.CONFLICT);
+            expect(response.statusCode).toBe(StatusCodes.CONFLICT);
+            expect(response.body).toHaveProperty('code', StatusCodes.CONFLICT);
             expect(response.body).toHaveProperty('success', false);
             expect(response.body).toHaveProperty('error', 'Product name already exists!');
         });
     });
-
-    describe('PUT - /api/v1/products/:productId', () => {
+    describe('PUT - /api/v1/products/:productId - Update product', () => {
         let initialState;
 
         beforeAll(async () => {
@@ -113,8 +111,8 @@ describe('Testing Product Api', () => {
                     [config.auth.headers.authorization]: initialState.accessToken,
                 })
                 .send(testCase);
-            expect(response.statusCode).toBe(StatusCode.OKE);
-            expect(response.body).toHaveProperty('code', StatusCode.OKE);
+            expect(response.statusCode).toBe(StatusCodes.OK);
+            expect(response.body).toHaveProperty('code', StatusCodes.OK);
             expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('message', 'Updated product!');
             expect(response.body).toHaveProperty('metadata');
@@ -126,8 +124,7 @@ describe('Testing Product Api', () => {
             );
         });
     });
-
-    describe('DELETE - /api/v1/products/:productId', () => {
+    describe('DELETE - /api/v1/products/:productId - Delete product by id', () => {
         let initialState;
 
         beforeAll(async () => {
@@ -141,8 +138,8 @@ describe('Testing Product Api', () => {
                     [config.auth.headers.clientId]: initialState.userId,
                     [config.auth.headers.authorization]: initialState.accessToken,
                 });
-            expect(response.statusCode).toBe(StatusCode.OKE);
-            expect(response.body).toHaveProperty('code', StatusCode.OKE);
+            expect(response.statusCode).toBe(StatusCodes.OK);
+            expect(response.body).toHaveProperty('code', StatusCodes.OK);
             expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('message', 'Deleted product!');
         });
