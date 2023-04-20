@@ -53,7 +53,7 @@ const UserSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     {
         timestamps: true,
-        collection: 'Users',
+        collection: 'users',
     }
 );
 
@@ -68,4 +68,4 @@ UserSchema.method('comparePassword', async function (candidatePassword: string) 
     return await compare(candidatePassword, this.password);
 });
 
-export const User = model<IUser, IUserModel>('User', UserSchema);
+export const User = model<IUser, IUserModel>('Users', UserSchema);

@@ -6,7 +6,7 @@ export interface IProduct {
     name: string;
     slug: string;
     image: string;
-    category: string;
+    category?: Types.ObjectId;
     price: number;
     countInStock: number;
     rating: number;
@@ -36,10 +36,8 @@ const ProductSchema = new Schema<IProduct>(
             required: true,
         },
         category: {
-            type: String,
-            trim: true,
-            minlength: 3,
-            maxlength: 50,
+            type: Types.ObjectId,
+            ref: 'categories',
             required: true,
         },
         price: {
@@ -83,7 +81,7 @@ const ProductSchema = new Schema<IProduct>(
     },
     {
         timestamps: true,
-        collection: 'Products',
+        collection: 'products',
     }
 );
 
@@ -96,4 +94,4 @@ ProductSchema.pre('save', function (next) {
     next();
 });
 
-export const Product = model<IProduct>('Product', ProductSchema);
+export const Product = model<IProduct>('Products', ProductSchema);

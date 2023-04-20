@@ -26,7 +26,7 @@ const CategorySchema = new Schema<ICategory>(
     },
     {
         timestamps: true,
-        collection: 'Categories',
+        collection: 'categories',
     }
 );
 
@@ -38,4 +38,4 @@ CategorySchema.pre('save', function (next) {
     next();
 });
 
-export const Category = model<ICategory>('categories', CategorySchema);
+export const Category = model<ICategory>('Categories', CategorySchema);

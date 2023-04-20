@@ -5,7 +5,7 @@
     "license": "MIT",
     "scripts": {
         "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
-        "crawler": "ts-node -r tsconfig-paths/register src/crawlers/digital-world-shop.crawler.ts",
+        "crawler": "ts-node -r tsconfig-paths/register src/crawlers/index.ts",
         "test": "jest -i --colors --verbose --detectOpenHandles",
         "test:watch": "jest -i --watchAll",
         "lint": "eslint --ignore-path .eslintignore --ext .js,.ts ."

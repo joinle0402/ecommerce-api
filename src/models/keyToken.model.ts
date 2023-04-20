@@ -34,8 +34,8 @@ const KeyTokenSchema = new Schema<IKeyToken>(
     },
     {
         timestamps: true,
-        collection: 'KeyTokens',
+        collection: 'keyTokens',
     }
 );
 
-export const KeyToken = model<IKeyToken>('KeyToken', KeyTokenSchema);
+export const KeyToken = model<IKeyToken>('KeyTokens', KeyTokenSchema);
