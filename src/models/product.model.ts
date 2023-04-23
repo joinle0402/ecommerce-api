@@ -1,6 +1,7 @@
 import { logger } from '@/utilities/logger.utility';
-import { Schema, Types, model } from 'mongoose';
+import { Document, Model, Schema, Types, model } from 'mongoose';
 import slugify from 'slugify';
+import { PaginationResponse, paginatePlugin } from './plugins/paginate.plugin';
 
 export interface IProduct {
     name: string;
@@ -12,6 +13,14 @@ export interface IProduct {
     rating: number;
     description: string;
     createdBy?: Types.ObjectId;
+}
+
+export interface ProductDocument extends Document {}
+
+interface IProductMethods {}
+
+interface IProductModel extends Model<IProduct, {}, IProductMethods> {
+    paginate: (query) => PaginationResponse<IProduct & { _id: string }>;
 }
 
 const ProductSchema = new Schema<IProduct>(
@@ -85,6 +94,8 @@ const ProductSchema = new Schema<IProduct>(
     }
 );
 
+ProductSchema.plugin(paginatePlugin);
+
 ProductSchema.pre('save', function (next) {
     if (this.isModified('name')) {
         this.slug = slugify(this.name, { lower: true, trim: true });
@@ -94,4 +105,4 @@ ProductSchema.pre('save', function (next) {
     next();
 });
 
-export const Product = model<IProduct>('Products', ProductSchema);
+export const Product = model<IProduct, IProductModel>('Products', ProductSchema);

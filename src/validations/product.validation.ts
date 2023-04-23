@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { isValidObjectId } from './custom.validation';
 
-export const createProductSchema = {
+export const create = {
     body: Joi.object().keys({
         name: Joi.string().min(5).max(150).trim().required(),
         image: Joi.string().trim().required(),
@@ -14,7 +14,13 @@ export const createProductSchema = {
     }),
 };
 
-export const updateProductSchema = {
+export const findById = {
+    params: {
+        productId: Joi.string().required().custom(isValidObjectId),
+    },
+};
+
+export const updateById = {
     params: {
         productId: Joi.string().required().custom(isValidObjectId),
     },
@@ -30,7 +36,7 @@ export const updateProductSchema = {
     }),
 };
 
-export const deleteProductSchema = {
+export const deleteById = {
     params: {
         productId: Joi.string().required().custom(isValidObjectId),
     },

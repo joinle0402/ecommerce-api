@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { app } from '@/app';
+import { config } from '@/configs/config';
 
 beforeAll(async () => {
     mongoose.set('strictQuery', false);
@@ -15,20 +16,18 @@ afterAll(async () => {
     await mongoose.connection.close();
 });
 
-export async function initialAuthenticate() {
-    const userInput = {
+export async function initialAuthentication() {
+    const registerInput = {
         fullname: faker.name.fullName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
     };
-    await request(app).post('/api/v1/auth/register').send(userInput);
-    const loginResponse = await request(app).post('/api/v1/auth/login').send({
-        email: userInput.email,
-        password: userInput.password,
-    });
+    await request(app).post('/api/v1/auth/register').send(registerInput);
+    const loginInput = { email: registerInput.email, password: registerInput.password };
+    const login = await request(app).post('/api/v1/auth/login').send(loginInput);
 
     return {
-        userId: loginResponse.body.metadata.user._id as string,
-        accessToken: loginResponse.body.metadata.tokenPair.accessToken as string,
+        [config.auth.headers.clientId]: login.body.metadata.user._id,
+        [config.auth.headers.authorization]: login.body.metadata.tokenPair.accessToken,
     };
 }
